@@ -68,6 +68,51 @@ class BoolQuery implements BuilderInterface
     }
 
     /**
+     * Removes queries by bool type
+     *
+     * @param string $boolType
+     *
+     * @return bool
+     */
+    public function removeByBoolType($boolType = null) {
+
+        if($boolType === null) {
+            $this->container = [];
+            return true;
+        }
+
+        if(isset($this->container[$boolType])) {
+            unset($this->container[$boolType]);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes queries by query type
+     *
+     * @param      $queryType
+     * @param null $boolType
+     */
+    public function removeByQueryType($queryType, $boolType = null) {
+        if($boolType === null) {
+            foreach($this->container as $boolType => $queryTypes) {
+                foreach($queryTypes as $index => $types) {
+                    if(get_class($types) === $queryType) {
+                        unset($this->container[$boolType][$index]);
+                    }
+                }
+            }
+        } else {
+            foreach($this->container[$boolType] as $index => $item) {
+                if(get_class($item) === $queryType) {
+                    unset($this->container[$boolType][$index]);
+                }
+            }
+        }
+    }
+
+    /**
      * Add BuilderInterface object to bool operator.
      *
      * @param BuilderInterface $query Query add to the bool.
